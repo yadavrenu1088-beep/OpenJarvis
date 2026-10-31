@@ -14,14 +14,16 @@ services:
     # to that same value because Docker commands do not interpolate `$PORT`.
     # Pin a cloud model as well as the engine. The repository's default model
     # is local-only, so omitting this would make `jarvis serve` reject the
-    # otherwise healthy cloud engine during startup.
-    dockerCommand: serve --host 0.0.0.0 --port 10000 --engine cloud --model gpt-4o-mini
+    # otherwise healthy cloud engine during startup. gemini-2.5-flash is served
+    # by the Google Gemini cloud engine and is available on Google's free tier
+    # (check Google AI Studio for your current limits).
+    dockerCommand: serve --host 0.0.0.0 --port 10000 --engine cloud --model gemini-2.5-flash
     healthCheckPath: /health
     autoDeploy: true
     envVars:
       # Force the cloud engine path. The free Render plan has no GPU and the
       # bundled local backends (Ollama/vLLM) cannot run here. The command above
-      # selects the OpenAI-backed cloud engine and a model it can serve.
+      # selects the Gemini-backed cloud engine and a model it can serve.
 
       # Keep Render's expected public port aligned with the fixed Docker
       # command above. Change both values together when customizing the port.
@@ -36,8 +38,9 @@ services:
       # Required at initial Blueprint creation. Render's `sync: false` fields
       # are operator-supplied secrets; using one provider here keeps the
       # one-click contract deterministic instead of incorrectly requiring a
-      # key for every supported cloud provider.
-      - key: OPENAI_API_KEY
+      # key for every supported cloud provider. Create a free key in Google AI
+      # Studio. It stays server-side and is never sent to the browser.
+      - key: GEMINI_API_KEY
         sync: false
 
       # The free service filesystem is ephemeral. OpenJarvis state under this
