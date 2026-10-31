@@ -2,14 +2,15 @@
 
 The repository's `render.yaml` is a minimal Render Blueprint for the
 OpenJarvis API server. It builds `deploy/docker/Dockerfile`, binds the server to
-Render's default web-service port (`10000`), and uses OpenAI's `gpt-4o-mini`
-through the cloud engine.
+Render's default web-service port (`10000`), and uses Google's `gemini-2.5-flash`
+through the cloud engine (the Gemini free tier can be enough for personal use).
 
 ## Create the service
 
 1. Open Render's **New Blueprint Instance** flow and select your OpenJarvis
    fork.
-2. Provide `OPENAI_API_KEY` when Render asks for the Blueprint secret.
+2. Provide `GEMINI_API_KEY` (created in Google AI Studio) when Render asks for
+   the Blueprint secret.
 3. Apply the Blueprint and wait for `/health` to become healthy.
 4. Retrieve the generated `OPENJARVIS_API_KEY` from the Render dashboard and
    send it as `Authorization: Bearer <key>` with API requests.
@@ -22,7 +23,8 @@ The Blueprint deliberately requires one provider key. Render treats every
 `sync: false` environment variable as an input during initial creation, so
 listing every optional cloud provider would incorrectly require credentials
 for all of them. To use another provider, install its corresponding OpenJarvis
-inference extra in the image, change `--model` to a model that provider serves,
+inference extra in the image (the Dockerfile already installs `inference-google`),
+change `--model` to a model that provider serves,
 and replace the secret in your own Blueprint.
 
 ## Storage and free-instance limits
