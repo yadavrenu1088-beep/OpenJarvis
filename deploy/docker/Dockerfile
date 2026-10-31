@@ -37,9 +37,12 @@ WORKDIR /app
 # only application code changes.
 COPY pyproject.toml uv.lock README.md ./
 RUN pip install --no-cache-dir uv && \
-    uv export --frozen --no-dev --extra server --no-emit-project > requirements.txt && \
+    uv export --frozen --no-dev --extra server --extra inference-google --no-emit-project > requirements.txt && \
     uv pip install --system --no-deps -r requirements.txt && \
     uv pip install --system --no-deps "maturin>=1.12.6,<2"
+
+# The `inference-google` extra installs google-genai, the SDK the Gemini cloud
+# engine needs (GEMINI_API_KEY). `openai` is already a core dependency.
 
 # Copy the source and the non-src force-include paths (see pyproject
 # [tool.hatch.build.targets.wheel.force-include]) before building the project.
